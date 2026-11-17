@@ -2,7 +2,7 @@
 
 **小小故障，层层失控。亲手理解重试、队列、限流与熔断。**
 
-[在线实验台](https://xiaoyouxian07-cpu.github.io/cascade-lab/) · [English](README.md) · [模型说明](docs/model.md)
+[立即运行](#立即运行) · [English](README.md) · [模型说明](docs/model.md)
 
 依赖突然变慢，客户端开始超时、重试。但客户端不等了，不代表服务器停止处理旧请求。于是恢复流量本身，也成了故障的一部分。
 

@@ -1,7 +1,7 @@
 <p align="center"><img src="icon.svg" width="64" alt="Cascade Lab"></p>
 <h1 align="center">Cascade Lab</h1>
 <p align="center"><strong>Small fault. Big cascade.</strong><br>A flight simulator for retries, queues, and circuit breakers.</p>
-<p align="center"><a href="https://xiaoyouxian07-cpu.github.io/cascade-lab/">Live playground</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="docs/model.md">How the model works</a> · <a href="docs/experiments.md">Try an experiment</a></p>
+<p align="center"><a href="#try-it-in-30-seconds">Run the playground</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="docs/model.md">How the model works</a> · <a href="docs/experiments.md">Try an experiment</a></p>
 
 Your dependency slows down. Clients time out. They retry. The old requests are **still running**. Now your recovery traffic is the outage.
 
