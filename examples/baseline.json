@@ -1,0 +1,1 @@
+{"seed":42,"arrivalRate":65,"concurrency":12,"serviceTime":120,"queueCapacity":80,"timeout":1200,"slowdown":5,"policy":"fixed","retries":3}

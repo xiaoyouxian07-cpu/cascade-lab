@@ -1,0 +1,18 @@
+name: Reproducible bug
+description: Report unexpected UI or model behavior
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Experiment config or share link
+      description: Include the model version and seed. Synthetic configs only; no credentials.
+  - type: input
+    id: environment
+    attributes:
+      label: Browser or Node version

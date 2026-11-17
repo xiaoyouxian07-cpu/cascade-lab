@@ -1,0 +1,17 @@
+{
+  "name": "cascade-lab",
+  "version": "1.0.0",
+  "description": "Break a system. Understand the cascade. A deterministic resilience playground, browser and CLI.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "bin": { "cascade-lab": "bin/cascade.js" },
+  "exports": { ".": "./src/engine.js", "./presets": "./src/presets.js" },
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "build": "node scripts/build.js",
+    "test": "node --test test/*.test.js",
+    "demo": "node bin/cascade.js --scenario retry-storm --compare"
+  }
+}

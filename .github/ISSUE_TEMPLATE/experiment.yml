@@ -1,0 +1,13 @@
+name: New experiment or model correction
+description: Suggest a useful scenario or challenge a model assumption
+body:
+  - type: textarea
+    id: lesson
+    attributes:
+      label: What should this teach or correct?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Config, reasoning, or reference

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Break a system. Understand the cascade. Explore retry storms, queues, circuit breakers and backpressure in a deterministic, local simulation.">
+  <meta name="theme-color" content="#f6f4ee"><meta property="og:title" content="Cascade Lab — break a system, understand the cascade.">
+  <meta property="og:description" content="An interactive resilience playground. Same traffic. Two strategies. See what actually changes.">
+  <title>Cascade Lab — Resilience playground</title><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<a class="skip" href="#workspace">Skip to experiment</a>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Cascade Lab home"><img src="./icon.svg" width="32" height="32" alt=""><strong>cascade<span>lab</span></strong><span class="version">v1.0</span></a>
+  <nav aria-label="Main navigation"><span class="local"><i></i><span data-i18n="local">Runs on your machine</span></span><button id="language" class="text-button">中文</button><button id="model-open" class="text-button" data-i18n="model">How it works</button><a class="repo-link" href="https://github.com/xiaoyouxian07-cpu/cascade-lab" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
+</header>
+<main>
+<section class="intro">
+  <div><p class="eyebrow"><span class="tiny-cross">✳</span> <span data-i18n="eyebrow">THE DISTRIBUTED SYSTEMS PLAYGROUND</span></p><h1 data-i18n="headline">Small fault.<br><em>Big cascade.</em></h1><p class="lede" data-i18n="lede">Break a system. Change one decision. See why it survives.<br>A flight simulator for retries, queues, and circuit breakers.</p></div>
+  <div class="intro-note"><span class="note-index">EXPERIMENT / 001</span><div class="mini-wave" aria-hidden="true">▁▁▂▃▂▅█▇▅▂▃▁▁▁</div><p data-i18n="note">The failure is simulated.<br>The intuition is real.</p><span class="note-footer" data-i18n="noapi">NO API KEYS · NO REAL TRAFFIC</span></div>
+</section>
+<section class="scenario-bar" aria-label="Scenarios"><span class="section-label" data-i18n="choose">PICK A FAILURE</span><div id="scenarios" class="scenario-tabs"></div></section>
+<div id="workspace" class="workspace">
+<aside class="controls panel">
+  <div class="panel-heading"><h2 data-i18n="conditions">Test conditions</h2><button id="reset" class="text-button small" data-i18n="reset">Reset ↺</button></div>
+  <p id="scenario-description" class="muted description"></p>
+  <form id="controls-form">
+    <div class="control-section"><h3><span>01</span> <span data-i18n="traffic">TRAFFIC & SERVICE</span></h3>
+      <label class="range-label" for="arrivalRate"><span data-i18n="arrivalRate">Incoming traffic</span><output id="arrivalRate-value"></output></label><input type="range" id="arrivalRate" min="5" max="200" step="5">
+      <label class="range-label" for="concurrency"><span data-i18n="concurrency">Worker slots</span><output id="concurrency-value"></output></label><input type="range" id="concurrency" min="1" max="32" step="1">
+      <label class="range-label" for="serviceTime"><span data-i18n="serviceTime">Service time</span><output id="serviceTime-value"></output></label><input type="range" id="serviceTime" min="25" max="500" step="5">
+      <label class="range-label" for="queueCapacity"><span data-i18n="queueCapacity">Queue capacity</span><output id="queueCapacity-value"></output></label><input type="range" id="queueCapacity" min="0" max="200" step="10">
+    </div>
+    <div class="control-section"><h3><span>02</span> <span data-i18n="fault">INJECTED FAULT</span><span class="fault-window">15–32 s</span></h3>
+      <label class="range-label" for="slowdown"><span data-i18n="slowdown">Service slowdown</span><output id="slowdown-value"></output></label><input type="range" id="slowdown" min="1" max="12" step="1">
+      <label class="range-label" for="burstMultiplier"><span data-i18n="burstMultiplier">Traffic multiplier</span><output id="burstMultiplier-value"></output></label><input type="range" id="burstMultiplier" min="1" max="5" step="0.5">
+      <label class="range-label" for="failureRate"><span data-i18n="failureRate">Server error probability</span><output id="failureRate-value"></output></label><input type="range" id="failureRate" min="0" max="1" step="0.05">
+    </div>
+    <div class="control-section"><h3><span>03</span> <span data-i18n="candidate">CANDIDATE STRATEGY</span></h3>
+      <label class="select-label" for="policy" data-i18n="policy">Retry policy</label><select id="policy"><option value="none">No retries</option><option value="fixed">Fixed delay</option><option value="exponential">Exponential backoff</option><option value="jitter">Exponential + full jitter</option></select>
+      <label class="range-label" for="retries"><span data-i18n="retries">Retry budget</span><output id="retries-value"></output></label><input type="range" id="retries" min="0" max="6" step="1">
+      <label class="range-label" for="retryDelay"><span data-i18n="retryDelay">Initial retry delay</span><output id="retryDelay-value"></output></label><input type="range" id="retryDelay" min="25" max="2000" step="25">
+      <label class="range-label" for="timeout"><span data-i18n="timeout">Attempt timeout</span><output id="timeout-value"></output></label><input type="range" id="timeout" min="100" max="5000" step="100">
+      <label class="range-label" for="candidateQueueCapacity"><span data-i18n="candidateQueueCapacity">Candidate queue capacity</span><output id="candidateQueueCapacity-value"></output></label><input type="range" id="candidateQueueCapacity" min="0" max="200" step="10">
+      <label class="switch-row" for="breaker"><span data-i18n="breaker">Circuit breaker</span><input id="breaker" type="checkbox" role="switch"></label>
+      <label class="range-label" for="rateLimit"><span data-i18n="rateLimit">Admission limit</span><output id="rateLimit-value"></output></label><input type="range" id="rateLimit" min="0" max="200" step="5">
+    </div>
+    <div class="seed-row"><label for="seed" data-i18n="seed">Random seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="42"></div>
+  </form>
+  <p class="control-foot" data-i18n="paired">Both runs share the same incoming traffic. Strategy controls change the candidate only.</p>
+</aside>
+<div class="results">
+  <section class="simulation panel">
+    <div class="simulation-heading"><div><span class="section-label" data-i18n="live">SYSTEM REPLAY</span><h2 data-i18n="sameTraffic">Same traffic. Two outcomes.</h2></div><span id="run-state" class="status-pill">Ready</span></div>
+    <div class="topology-labels"><span data-i18n="clients">CLIENTS</span><span data-i18n="admission">ADMISSION</span><span data-i18n="queue">QUEUE</span><span data-i18n="workers">WORKERS</span><span data-i18n="completed">SUCCEEDED</span></div>
+    <div id="lanes"></div>
+    <div class="replay-controls"><button id="play" aria-label="Play simulation">▶</button><input id="scrubber" type="range" min="0" max="240" value="240" step="1" aria-label="Replay position"><output id="clock">60.00 s</output><select id="speed" aria-label="Playback speed"><option value="1">1×</option><option value="2" selected>2×</option><option value="4">4×</option></select></div>
+    <div class="replay-legend"><span><i class="dot coral"></i><span data-i18n="baseline">Baseline</span></span><span><i class="dot teal"></i><span data-i18n="candidateName">Candidate</span></span><span><i class="dot faded"></i><span data-i18n="abandoned">Work after timeout</span></span><span class="replay-note" data-i18n="scrub">Drag the timeline to inspect the fault.</span></div>
+  </section>
+  <section class="metrics" id="metrics" aria-label="Comparison metrics"></section>
+  <section class="chart-panel panel"><div class="chart-heading"><div><span class="section-label" data-i18n="pressure">THE COST OF TRYING AGAIN</span><h2 data-i18n="chartTitle">Backend pressure</h2></div><div class="chart-key"><span><i class="line coral"></i><span data-i18n="baseline">Baseline</span></span><span><i class="line teal"></i><span data-i18n="candidateName">Candidate</span></span><span><i class="line dashed"></i><span data-i18n="capacity">Nominal capacity</span></span></div></div><div id="chart" class="chart"></div><p class="chart-caption" data-i18n="chartCaption">Calls reaching the backend per second, including queue rejections. Shaded region = injected fault. Capacity is an approximation; requests have varied service times.</p></section>
+  <section class="insight panel"><div class="insight-icon">↳</div><div><span class="section-label" data-i18n="readout">EXPERIMENT READOUT</span><h3 id="insight-title"></h3><p id="insight-body"></p></div></section>
+  <section class="export-bar"><span data-i18n="reproducible">GOOD EXPERIMENTS ARE REPRODUCIBLE.</span><div><button id="share" data-i18n="share">Copy experiment link ↗</button><button id="export" data-i18n="export">Export report ↓</button><button id="export-config" data-i18n="configExport">Config ↓</button><button id="import-config" data-i18n="configImport">Import ↑</button><input type="file" id="import-file" accept=".json,application/json" hidden></div></section>
+  <details class="event-panel panel"><summary data-i18n="events">Circuit-breaker event log</summary><div id="event-list"></div></details>
+</div>
+</div>
+<section class="learn-grid"><article><span>01 / RETRIES</span><h3 data-i18n="learn1Title">A retry is more traffic.</h3><p data-i18n="learn1">When a service is overloaded, asking again can make it slower. Backoff buys time; jitter keeps clients from asking together.</p></article><article><span>02 / TIMEOUTS</span><h3 data-i18n="learn2Title">Giving up ≠ stopping work.</h3><p data-i18n="learn2">A client can stop waiting while its request still occupies a worker. Watch the faded slots: that is work nobody is waiting for.</p></article><article><span>03 / TRADEOFFS</span><h3 data-i18n="learn3Title">There is no magic toggle.</h3><p data-i18n="learn3">A breaker protects a dependency by refusing calls. It can also reject useful work. Compare successful, failed, and unfinished clients together.</p></article></section>
+<footer><a class="brand" href="./"><strong>cascade<span>lab</span></strong></a><span data-i18n="footer">Built for understanding, not capacity planning. Open source · MIT.</span><button class="text-button" id="model-footer" data-i18n="assumptions">Read the model assumptions ↗</button></footer>
+</main>
+<dialog id="model-dialog"><div class="dialog-head"><h2 data-i18n="modelTitle">A small model, made explicit.</h2><button id="model-close" aria-label="Close model details">×</button></div><div id="model-content"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript>This simulator needs JavaScript. You can also run the dependency-free Node.js CLI.</noscript>
+<script type="module" src="./app.js"></script>
+</body></html>
